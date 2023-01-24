@@ -34,17 +34,16 @@
     try {
       const res = await axios.post("http://localhost:8000/form", obj);
       rows = res.data.counts;
-      console.log(rows)
     } catch (err) {
+        
       dispatch("servererror", {
-        text: "Sorry, the server seems to be down 😢 Try again later.",
+        text: err.code==="ERR_BAD_RESPONSE" 
+                ? "Sorry mate, the server had an issue processing your request 😢 Please try again or visit this page later."
+                : "It appears that the server is offline 😔 Please try again later."
       });
     }
   };
-
 </script>
-
-
 
 <form on:submit|preventDefault={handleSubmit} class="w-full">
     <div class="px-8 py-6 my-4">

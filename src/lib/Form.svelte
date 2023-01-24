@@ -3,11 +3,18 @@
   import { fly, fade, slide } from "svelte/transition";
   import Grid from "gridjs-svelte"; 
   import Main from "./Main.svelte";
+  import ErrorModal from "./ErrorModal.svelte";
 
   let submitted = true;
   let rows;
+  let showErrorModal = false; 
+  let error; 
 
 </script>
+
+{#if showErrorModal}
+<ErrorModal error={error} on:modal-close={()=> showErrorModal=false}/>
+{/if}
 
 <div class="bg-gradient-to-r h-48 from-indigo-500 to-cyan-500 " />
 
@@ -24,7 +31,7 @@
     </div>
   {/if}
   <main in:slide class=" bg-slate-50 rounded-md shadow-md">
-    <Main bind:rows={rows}/>
+    <Main bind:rows={rows} on:servererror={(e) => {showErrorModal = true; error=e.detail.text }}/>
 
     {#if rows}
       <div class="w-full px-10 mx-auto">
