@@ -25,7 +25,7 @@
   bind:value
   rows="5"
   placeholder="Enter a few lines of text"
-  class="appearance-none flex-1 focus:outline-none focus:border-sky-500 focus:ring-3 focus:ring-sky-500 transform transition focus:shadow-sm p-3 border-slate-200 d rounded-lg border-2 w-full"
+  class="appearance-none flex-1 focus:outline-none focus:border-sky-500 focus:ring-3 focus:ring-sky-500 transform transition focus:shadow-sm p-3 border-slate-200 rounded-lg border-2 w-full"
 />
 
 <div class="flex gap-5 items-center">
