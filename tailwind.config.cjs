@@ -6,7 +6,7 @@ module.exports = {
     {
       fontFamily: {
         'sans': ['Catamaran', 'sans-serif'],
-        'josefin': ["Josefin Slab", 'serif']
+        'roboto': ["Roboto Slab", 'serif']
       },
     },
   },

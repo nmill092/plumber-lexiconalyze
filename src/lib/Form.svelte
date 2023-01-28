@@ -1,94 +1,156 @@
 <script>
+  import axios from "axios";
+  import { onMount, createEventDispatcher } from "svelte";
+  import MultiSelect from "svelte-multiselect";
+  import { flip } from "svelte/animate";
+  import { fade, fly } from "svelte/transition";
   import Input from "./Input.svelte";
-  import SummaryChart from "./SummaryChart.svelte";
-  import { fly, fade, slide } from "svelte/transition";
-  import Grid from "gridjs-svelte";
-  import Main from "./Main.svelte";
-  import ErrorModal from "./ErrorModal.svelte";
 
-  let shown = true;
-  let rows;
-  let showErrorModal = false;
-  let error;
-  let grid;
-  let showTable = false;
-  let handleSubmit;
+  export let lexicon; 
+  export let rows; // will be populated with api response data
+  export let showTable = false;
 
-  const scrollGridIntoView = () => {
-    setTimeout(() => {
-      grid.scrollIntoView({ block: "end", behavior: "smooth" });
-    }, 100); // don't love this, but struggling to keep grid from scrolling into view before Grid component has mounted
+  let form; 
+  let texts = [{ id: 0, val: "" }];
+  let idCounter = 0;
+  let options = []; 
+
+  onMount(() => {
+    axios.get("http://localhost:8000/lexicons")
+        .then(res => {
+          options = res.data; 
+        })
+  })
+
+  const dispatch = createEventDispatcher();
+
+  const addField = () => {
+    idCounter++;
+    texts = [...texts, { id: idCounter, val: "" }];
   };
+
+  const removeField = (idToDelete) => {
+    texts = texts.filter((i) => i.id != idToDelete);
+  };
+ 
+  export let handleSubmit = async (e) => {
+    let corpus = texts.map((text) => text.val);
+    const formData = new FormData(e.target);
+    formData.set("corpus", JSON.stringify(corpus));
+    const formObj = Object.fromEntries(formData.entries());    
+    console.log(formObj)
+
+
+    try {
+      const res = await axios.post("http://localhost:8000/form", formObj);
+      rows = res.data;
+      showTable = true;
+      lexicon = formObj.lexicon; 
+      dispatch("submitted");
+    } catch (err) {
+      alert(err);
+      dispatch("servererror", {
+        text:
+          err.code === "ERR_BAD_RESPONSE"
+            ? "Sorry mate, the server had an issue processing your request 😢 Please try again or visit this page later."
+            : "It looks like the server is offline 😔 Please try again later.",
+      });
+    }
+  };
+
+  const resetAll = () => { 
+    texts = [{ id: 0, val: "" }]; 
+    lexicon = ''; 
+    window.scrollTo(0,0); 
+    showTable=false; 
+  }
 </script>
 
-
-{#if showErrorModal}
-  <ErrorModal {error} on:modal-close={() => (showErrorModal = false)} />
-{/if}
-
-<div class="bg-gradient-to-r h-48 w-full from-indigo-500 to-cyan-500 " />
-
-<div class="my-11 mx-10 grid gap-10 lg:grid-flow-col lg:auto-cols-[1fr_3fr]">
-  {#if shown}
-    <div
-      in:fly={{ x: -200 }}
-      out:fly={{ x: -200 }}
-      class="mb-0 p-8 bg-slate-50 rounded-md shadow-md"
-    />
-  {/if}
-
-  <main in:slide class=" bg-slate-50 rounded-md shadow-md">
-    <Main
-      bind:rows
-      bind:showTable
-      on:submitted={scrollGridIntoView}
-      {handleSubmit}
-      on:servererror={(e) => {
-        showErrorModal = true;
-        error = e.detail.text;
-      }}
-    />
-
-    
-    <h2 class="text-3xl mx-10 font-josefin">Results</h2>
-
-    {#if showTable}
-      {#if rows.counts.length === 0}
-      <div class='py-6 mx-10 px-3 my-4 border-slate-200 rounded-lg border-2 bg-white'>
-        <h2 class="text-center font-bold text-lg">No results to display!</h2>
-        <p class="text-center font-light">This could have happened because your corpus wasn't large enough to analyze. Try using a different sentiment library or entering more or longer texts.</p>
-      </div>
-    
-      {:else}  
-
-      <div id="result" bind:this={grid} class="w-full px-10 mx-auto grid grid-cols-1 xl:grid-cols-2 gap-4">
-        
-        <div class='py-6 px-3 my-4 border-slate-200 rounded-lg border-2 bg-white'>
-          <SummaryChart data={rows.summary} words={rows.counts}/>
+<form on:submit|preventDefault={handleSubmit} bind:this={form} class="w-full">
+  <div class="px-8 py-6 my-4">
+    <h2 class="text-3xl my-4 font-roboto">Build your corpus</h2>
+    <div class="my-6">
+      <p class="mb-3">A <strong>corpus</strong> is a collection of texts that forms the basis of a. A text can be as short as a tweet or as long as a novel.</p> 
+      <p>Use the fields below to add your texts one-by-one. You can also submit a single text. You should aim to enter a total of at least a few sentences; otherwise, there won't be enough data to analyze your text.</p>
+    </div>
+     <div class="flex flex-col gap-3 content-center">
+      {#each texts as text, i (text.id)}
+        <div
+          class="flex-[1_0_auto]"
+          in:fade
+          out:fly
+          animate:flip={{ duration: 200 }}
+        >
+          <Input
+            on:textdelete={(e) => removeField(e.detail.id)}
+            on:addField={addField}
+            bind:value={texts[i].val}
+            disabled={texts.length === 1}
+            showAdd={texts[texts.length - 1].id === text.id}
+            id={text.id}
+          />
         </div>
-      
-        <div class='py-6 px-3 my-4 border-slate-200 rounded-lg border-2 bg-white'>
-          <Grid
-          style ={
-          { container: {
-           boxShadow: '0px 0px 0px 0px',
-           border: 'none'
-           }, table: {
-       border: 'none'
-           }}
-          }
-           data={rows.counts}
-           search={true}
-           sort={true}
-           pagination={{ limit: 10, summary: false }}
-         />
-        </div>
-      </div>
-      {/if}
-  {/if}
-  </main>
-</div>
+      {/each}
+    </div>
 
-<style>
-  @import "https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css";
-</style>
+    <hr class="my-8" />
+    <h2 class="text-3xl font-roboto">Customize your analysis</h2>
+
+    <div class="grid gap-2 grid-cols-1 lg:grid-cols-2">
+      <div class="px-3 my-4 py-5 border-slate-200 rounded-lg border-2 bg-white">
+        <h3 class="text-slate-800 text-xl font-markazi font-bold">
+          Get rid of stop words 🛑
+        </h3>
+        <p class="my-6">
+          <a
+            class="font-bold text-indigo-700 decoration-0"
+            href="https://github.com/igorbrigadir/stopwords"
+            target="_blank"
+            rel="noreferrer">Stop words</a
+          > are words that appear frequently in most texts but carry little or no
+          lexical significance ("and", "the", "of", and so on). All of the most common
+          stop words will be filtered out of your text automatically, but you can
+          enter additional custom stop words below.
+        </p>
+        <MultiSelect
+          --sms-padding={".75rem 1rem"}
+          outerDivClass={"px-3 py-2 bg-white rounded-lg border-slate-200 border-2"}
+          name="stops"
+          allowUserOptions={true}
+          createOptionMsg={"Add this stop word"}
+          id="languages"
+          options={[]}
+          placeholder="Enter your custom stop words here."
+        />
+      </div>
+
+      <div class="py-6 px-3 my-4 border-slate-200 rounded-lg border-2 bg-white">
+        <h3 class="text-slate-800 text-xl font-bold">
+          Choose a sentiment library 📚
+        </h3>
+        <p class="my-6">
+          There are many different methods and libraries that can be used to
+          evaluate the sentiment of a text. Here you can choose between three
+          popular sentiment libraries and compare the results. Which do you
+          think most accurately gauges the sentiment of your texts?
+        </p>
+        <select
+          id="sentiment" name="lexicon" class="w-full px-3 p py-2 bg-white rounded-lg border-slate-200 border-2">
+          <option disabled value="" selected>Choose a sentiment library</option>
+          {#each options as option}
+            <option value={option}>{option}</option>
+          {/each}
+        </select>
+      </div>
+    </div>
+
+    <button
+      disabled='{lexicon==='' || texts[0].val.length===0}'
+      type="submit"
+      class="m-auto font-bold disabled:bg-slate-700 transition tracking-wider cursor-pointer bg-indigo-600 text-white block my-5 transform rounded-lg lg:w-1/2 w-full hover:shadow-lg uppercase px-4 py-3"
+      >Submit</button
+    >
+
+    <button on:click|preventDefault={resetAll}>Reset</button>
+  </div>
+</form>

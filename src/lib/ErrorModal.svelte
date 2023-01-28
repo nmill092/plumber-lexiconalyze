@@ -1,6 +1,6 @@
 <script>
 import { createEventDispatcher } from "svelte";
-import { fly, fade, slide } from "svelte/transition";
+import { fly, fade } from "svelte/transition";
 
 export let error = "Something went wrong!"
 let container; 
