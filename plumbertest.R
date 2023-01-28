@@ -1,11 +1,5 @@
-library(plumber)
-library(tidyverse)
-library(ggplot2)
-library(ggthemes)
-library(jsonlite)
-library(tm)
-library(tidytext)
-library(readr)
+install.packages("pacman")
+pacman::p_load("plumber", "tidyverse", "jsonlite", "tm", "tidytext", "readr", "wordcloud2", "RColorBrewer")
 
 labMT <- read_delim("labMT2english.csv",delim = "\t") %>% rename("value" = "happs")
 
