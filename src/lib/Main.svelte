@@ -33,7 +33,7 @@
 
     try {
       const res = await axios.post("http://localhost:8000/form", formObj);
-      rows = res.data.counts;
+      rows = res.data;
       showTable = true;
       console.log(res.data);
       dispatch("submitted");
@@ -53,7 +53,7 @@
   <div class="px-8 py-6 my-4">
     <h2 class="text-3xl my-4 font-josefin">Build your corpus</h2>
     <div class="my-6">
-      <p class="mb-3">A <strong>corpus</strong> is a collection of texts that forms the basis of a. A text can be as short as a tweet or as long as a novel!</p> 
+      <p class="mb-3">A <strong>corpus</strong> is a collection of texts that forms the basis of a. A text can be as short as a tweet or as long as a novel.</p> 
       <p>Use the fields below to add your texts one-by-one. You can also submit a single text. You should aim to enter a total of at least a few sentences; otherwise, there won't be enough data to analyze your text.</p>
     </div>
      <div class="flex flex-col gap-3 content-center">
@@ -132,9 +132,9 @@
     </div>
 
     <button
-      disabled='{lexicon==='default'}'
+      disabled='{lexicon==='default' || texts[0].val.length===0}'
       type="submit"
-      class="appearance-none m-auto  font-bold disabled:bg-slate-700 transition tracking-wider cursor-pointer bg-indigo-600 text-white block my-5 transition transform rounded-lg lg:w-1/2 w-full hover:shadow-lg uppercase px-4 py-3"
+      class="m-auto font-bold disabled:bg-slate-700 transition tracking-wider cursor-pointer bg-indigo-600 text-white block my-5 transform rounded-lg lg:w-1/2 w-full hover:shadow-lg uppercase px-4 py-3"
       >Submit</button
     >
   </div>

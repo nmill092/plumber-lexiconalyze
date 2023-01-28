@@ -1,8 +1,9 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import Fa from "../../node_modules/svelte-fa";
-  import {faTrash, faAdd } from "../../node_modules/@fortawesome/free-solid-svg-icons";
+import Fa from "svelte-fa"; 
+import {faTrash, faAdd } from "../../node_modules/@fortawesome/free-solid-svg-icons";
   import tooltip from './tooltip.js'
+
   export let value;
   export let id;
   export let disabled;
