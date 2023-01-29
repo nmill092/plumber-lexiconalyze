@@ -15,6 +15,9 @@
   @tailwind components;
   @tailwind utilities;
 
+    
+  
+  
   :global(body) { 
     @apply bg-indigo-50;
     scroll-behavior: smooth;

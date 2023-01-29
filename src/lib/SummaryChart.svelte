@@ -14,7 +14,9 @@
       type: "bar",
       height: "600px",
     },
-    
+    grid: {
+        show: false
+    },
     dataLabels: {
       enabled: true,
       formatter: function (val, opts) {
@@ -22,7 +24,12 @@
       },
     },
     xaxis: {
-      categories: data.map((datum) => datum.sentiment),
+      categories: data.map((datum) => datum.sentiment)
+    },
+    yaxis: {
+        axisTicks: {
+        show: false
+      }
     },
     tooltip: {
       custom: function ({ series, seriesIndex, dataPointIndex, w }) {

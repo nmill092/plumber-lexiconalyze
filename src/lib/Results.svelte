@@ -4,8 +4,8 @@
  export let rows;
  export let results;
  export let lexicon; 
+ export let showWordcloudModal; 
 
- $: console.log(lexicon)
   
 import Chart from "./Chart.svelte";
 import DataGrid from "./DataGrid.svelte";
@@ -35,7 +35,7 @@ afterUpdate(() => {
       class="w-full px-10 mx-auto grid grid-cols-1 xl:grid-cols-2 gap-4"
     >
       
-    <Chart {lexicon} data={rows}/>
+    <Chart bind:showWordcloudModal {lexicon} data={rows}/>
     <DataGrid data={rows}/>
       
     </div>

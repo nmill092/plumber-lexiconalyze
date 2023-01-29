@@ -3,6 +3,7 @@
   import GaugeChart from "./GaugeChart.svelte";
   export let lexicon;
   export let data;
+  export let showWordcloudModal; 
 </script>
 
 <div class="py-6 px-5 my-4 border-slate-200 rounded-lg border-2 bg-white">
@@ -23,6 +24,9 @@
 
   <p class="text-lg">
     Remember that this is just an estimation based on the classification of each
-    word in your corpus according to your selected sentiment library. View the raw sentiment data in the table <span class="inline xl:hidden">below</span><span class="hidden xl:inline">on the right</span>.
+    word in your corpus according to your selected sentiment library. View the raw sentiment data in the table <span class="inline xl:hidden">below</span><span class="hidden xl:inline">on the right</span>, and click the button below to view a wordcloud of your text corpus.
   </p>
+
+<button class=" border font-bold tracking-wider transition border-transparent hover:bg-white hover:border hover:border-indigo-700 hover:text-indigo-700 rounded-lg mt-5 px-4 text-center uppercase py-2 w-full bg-indigo-700 text-white" on:click={() => showWordcloudModal = !showWordcloudModal}>Show Wordcloud</button>
+
 </div>

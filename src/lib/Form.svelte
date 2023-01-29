@@ -57,13 +57,6 @@
       });
     }
   };
-
-  const resetAll = () => { 
-    texts = [{ id: 0, val: "" }]; 
-    lexicon = ''; 
-    window.scrollTo(0,0); 
-    showTable=false; 
-  }
 </script>
 
 <form on:submit|preventDefault={handleSubmit} bind:this={form} class="w-full">
@@ -147,10 +140,12 @@
     <button
       disabled='{lexicon==='' || texts[0].val.length===0}'
       type="submit"
-      class="m-auto font-bold disabled:bg-slate-700 transition tracking-wider cursor-pointer bg-indigo-600 text-white block my-5 transform rounded-lg lg:w-1/2 w-full hover:shadow-lg uppercase px-4 py-3"
+      class="border transition border-transparent disabled:hover:text-white hover:bg-white hover:border hover:border-indigo-700 hover:text-indigo-700 rounded-lg mt-5 px-4 text-center uppercase py-2 w-full bg-indigo-700
+       m-auto font-bold disabled:bg-slate-700 tracking-wider cursor-pointer  text-white block my-5 transform lg:w-1/2 hover:shadow-lg"
       >Submit</button
     >
 
-    <button on:click|preventDefault={resetAll}>Reset</button>
+
+
   </div>
 </form>

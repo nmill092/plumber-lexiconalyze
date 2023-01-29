@@ -6,9 +6,11 @@
   import Form from "./Form.svelte";
   import Results from "./Results.svelte";
   import Sidebar from "./Sidebar.svelte";
+  import WordcloudModal from "./WordcloudModal.svelte";
 
   let rows;
   let showErrorModal = false;
+  let showWordcloudModal = false; 
   let error;
   let results;
   let lexicon;
@@ -17,7 +19,11 @@
 </script>
 
 {#if showErrorModal}
-  <ErrorModal {error} on:modal-close={() => (showErrorModal = false)} />
+  <ErrorModal {error} bind:showErrorModal />
+{/if}
+
+{#if showWordcloudModal}
+  <WordcloudModal bind:showWordcloudModal />
 {/if}
 
 <Header />
@@ -36,7 +42,7 @@
           error = e.detail.text;
         }}
       />
-      <Results {lexicon} bind:showTable bind:rows bind:results />
+      <Results bind:showWordcloudModal {lexicon} bind:showTable bind:rows bind:results />
     </main>
   </div>
 </div>

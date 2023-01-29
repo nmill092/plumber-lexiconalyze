@@ -8,10 +8,12 @@
     <Grid
       style={{
         container: {
+          height: "100%",
           boxShadow: "0px 0px 0px 0px",
           border: "none",
         },
         table: {
+          height: "100%",
           border: "none",
         },
       }}
