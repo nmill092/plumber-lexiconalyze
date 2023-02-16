@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte";
 import Fa from "svelte-fa"; 
 import {faTrash, faAdd } from "@fortawesome/free-solid-svg-icons";
-  import tooltip from './tooltip.js'
+  import tooltip from '../tooltip.js'
 
   export let value;
   export let id;

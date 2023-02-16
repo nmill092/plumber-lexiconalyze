@@ -5,10 +5,9 @@
  export let results;
  export let lexicon; 
  export let showWordcloudModal; 
-
   
 import Chart from "./charts/Chart.svelte";
-import DataGrid from "./DataTable.svelte";
+import DataTable from "./DataTable.svelte";
 
 afterUpdate(() => { 
     if(showTable) results.scrollIntoView({ block: "end", behavior: "smooth" });
@@ -38,7 +37,7 @@ afterUpdate(() => {
     >
       
     <Chart bind:showWordcloudModal {lexicon} data={rows}/>
-    <DataGrid data={rows}/>
+    <DataTable data={rows}/>
       
     </div>
   {/if}

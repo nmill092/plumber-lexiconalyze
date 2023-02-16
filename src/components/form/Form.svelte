@@ -1,10 +1,11 @@
 <script>
   import axios from "axios";
   import { onMount, createEventDispatcher } from "svelte";
-  import MultiSelect from "svelte-multiselect";
   import { flip } from "svelte/animate";
   import { fade, fly } from "svelte/transition";
   import Input from "./Input.svelte";
+  import StopWords from "./StopWords.svelte";
+  import Lexicon from "./Lexicon.svelte";
 
   export let lexicon; 
   export let rows; // will be populated with api response data
@@ -42,7 +43,7 @@
 
 
     try {
-      const res = await axios.post("http://localhost:8000/form", formObj);
+      const res = await axios.post("http://localhost:8000/analyze", formObj);
       rows = res.data;
       showTable = true;
       lexicon = formObj.lexicon; 
@@ -89,50 +90,10 @@
     <h2 class="text-2xl font-bold font-roboto">Customize your analysis</h2>
 
     <div class="grid gap-2 grid-cols-1 lg:grid-cols-2">
-      <div class="px-3 my-4 py-5 border-slate-200 rounded-lg border-2 bg-white">
-        <h3 class="text-slate-800 text-xl font-markazi font-bold">
-          Get rid of stop words 🛑
-        </h3>
-        <p class="my-6">
-          <a
-            class="font-bold text-indigo-700 decoration-0"
-            href="https://github.com/igorbrigadir/stopwords"
-            target="_blank"
-            rel="noreferrer">Stop words</a
-          > are words that appear frequently in most texts but carry little or no significance ("and", "the", "of", and so on). All of the most common
-          stop words will be filtered out of your text automatically, but you can
-          enter additional custom stop words below.
-        </p>
-        <MultiSelect
-          --sms-padding={".75rem 1rem"}
-          outerDivClass={"px-3 py-2 bg-white rounded-lg border-slate-200 border-2"}
-          name="stops"
-          allowUserOptions={true}
-          createOptionMsg={"Add this stop word"}
-          id="languages"
-          options={[]}
-          placeholder="Enter your custom stop words here."
-        />
-      </div>
-
-      <div class="py-6 px-3 my-4 border-slate-200 rounded-lg border-2 bg-white">
-        <h3 class="text-slate-800 text-xl font-bold">
-          Choose a sentiment lexicon 📚
-        </h3>
-        <p class="my-6">
-          There are many different methods and lexicons that can be used to
-          evaluate the sentiment of a text. Here you can choose between four
-          popular sentiment lexicons and compare the results. Which do you
-          think most accurately gauges the sentiment of your texts?
-        </p>
-        <select
-          id="sentiment" name="lexicon" class="w-full px-3 p py-2 bg-white rounded-lg border-slate-200 border-2">
-          <option disabled value="" selected>Choose a sentiment library</option>
-          {#each options as option}
-            <option value={option}>{option}</option>
-          {/each}
-        </select>
-      </div>
+      
+      <StopWords/> 
+      <Lexicon {options}/>
+      
     </div>
 
     <button

@@ -3,7 +3,7 @@
   import WordcloudModal from "./modals/WordcloudModal.svelte";
   import Header from "./Header.svelte";
   import Intro from "./Intro.svelte";
-  import Form from "./Form.svelte";
+  import Form from "./form/Form.svelte";
   import Results from "./Results.svelte";
   
   

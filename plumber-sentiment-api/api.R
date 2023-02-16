@@ -4,9 +4,6 @@
 # install.packages("pacman")
 pacman::p_load("plumber", "tidyverse", "jsonlite", "tm", "tidytext", "readr", "wordcloud2", "RColorBrewer", "wordcloud", "htmlwidgets")
 
-# Initialize an empty global container for the analysis results
-result <- NULL  
-
 labMT <- read_delim("labMT2english.csv",delim = "\t") %>% rename("value" = "happs")
 
 lexicons <- list("AFINN" = tidytext::get_sentiments("afinn"), 
@@ -29,9 +26,12 @@ calculate_sentiment <- function(.corpus, .lexicon, .stops) {
   corpus <- tm::DocumentTermMatrix(corpus) # create a Document Term Matrix from the final cleaned text
   
   lexicon_df <- data.frame(lexicons[[.lexicon]])
+  
+  # Assign the below object to the global scope so that it can be used in the /wordcloud endpoint
+  tidy.corpus <<- broom::tidy(corpus)
 
   if (!.lexicon %in% c("AFINN", "Mechanical Turk (LabMT)")) {
-    counts <- tidy(corpus) %>%
+    counts <- tidy.corpus %>%
       inner_join(lexicon_df, by = c(term = "word")) %>%
       group_by(term, sentiment) %>%
       summarise(count = sum(count, na.rm = T)) %>%
@@ -43,13 +43,14 @@ calculate_sentiment <- function(.corpus, .lexicon, .stops) {
       mutate(pct = raw / sum(raw) * 100) %>%
       arrange(desc(pct))
     
-    result <<- list(counts = counts, 
+    result <- list(counts = counts, 
                    summary = summary)
+    print(tidy.corpus)
     
     return(result)
     
   } else {
-    counts <- broom::tidy(corpus) %>%
+    counts <- tidy.corpus %>%
       group_by(term) %>%
       summarise(count = sum(count, na.rm = T)) %>%
       inner_join(lexicon_df, by = c(term = "word"))
@@ -58,16 +59,16 @@ calculate_sentiment <- function(.corpus, .lexicon, .stops) {
 
     weighted_sentiment <- round(weighted.mean(x = summary$value, w = summary$count), 2)
     
-    result <<- list(counts = counts, 
+    result <- list(counts = counts, 
                weighted_sentiment = weighted_sentiment)
-    
+    print(tidy.corpus)
     return(result)
   }
 }
 
 # API -------------------------------------------------------------------
 
-# We need the below filter to enable our front end to call the API 
+# We need the below filter to enable our front end to call the API when running the app locally
 
 #* @filter cors
 cors <- function(req, res) {
@@ -92,6 +93,7 @@ function() {
 
 #* Passes user input to the calculate_sentiment function and returns detailed sentiment analysis as a JSON response
 #* @serializer unboxedJSON
+#* @post /analyze
 function(req) {
 
   calculate_sentiment(.stops = req$body$stops, 
@@ -101,9 +103,10 @@ function(req) {
 
 #* @get /wordcloud
 #* @serializer png
-function(req, res) {
-  wordcloud_df <- result$counts %>% 
-    rename("word" = "term", "freq" = "count") %>% 
+function() {
+  wordcloud_df <- tidy.corpus %>% 
+    rename("word" = "term", 
+           "freq" = "count") %>% 
     select(word,freq)
   
   wordcloud(words = wordcloud_df$word,
