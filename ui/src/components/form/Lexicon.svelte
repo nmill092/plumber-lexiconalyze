@@ -15,7 +15,7 @@
     </p>
     <select
       id="sentiment" name="lexicon" class="w-full px-3 p py-2 bg-white rounded-lg border-slate-200 border-2">
-      <option disabled value="" selected>Choose a sentiment library</option>
+      <option disabled value="" selected>Choose a sentiment lexicon</option>
       {#each options as option}
         <option value={option}>{option}</option>
       {/each}
