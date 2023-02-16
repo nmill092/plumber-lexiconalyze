@@ -1,6 +1,5 @@
 <script>
   import Fa from "svelte-fa"; 
-
   import { faGithub } from "@fortawesome/free-brands-svg-icons";
 </script>
 
@@ -15,7 +14,7 @@
     <p class="mt-4">Get started by pasting your texts into the section below.</p>
 
     <div class="mr-auto mt-6 flex justify-start ">
-      <a href="#">
+      <a href="https://github.com/nmill092/plumber-lexiconalyze" target="_blank" rel="noreferrer">
     <div class="bg-white px-3 py-1 rounded shadow-md">
       <Fa icon={faGithub} size="lg" class="inline" title="Github"/> &nbsp;View on Github
     </div>
