@@ -12,7 +12,8 @@ $: options = {
     type: "radialBar",
   },
  title: { 
-    text: lexicon
+    text: lexicon + " Lexicon Sentiment Analysis",
+    align: "center"
  }, 
   series: [scale(data)],
   fill: {
@@ -65,15 +66,15 @@ annotations: {
           fontSize: "30px",
           show: true,
           formatter: function () {
-                    return data
+                    return data.toFixed(1)
                   }
         }
       }
     }
   },
-  stroke: {
-    lineCap: "round"
-  },
+  // stroke: {
+  //   lineCap: "round"
+  // },
   labels: ["Weighted Score"]
 };
   </script>

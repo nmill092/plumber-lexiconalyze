@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
 import Fa from "svelte-fa"; 
-import {faTrash, faAdd } from "../../node_modules/@fortawesome/free-solid-svg-icons";
+import {faTrash, faAdd } from "@fortawesome/free-solid-svg-icons";
   import tooltip from './tooltip.js'
 
   export let value;

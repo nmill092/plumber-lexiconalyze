@@ -1,13 +1,12 @@
 <script>
-  import { afterUpdate } from "svelte";
-  import ErrorModal from "./ErrorModal.svelte";
+  import ErrorModal from "./modals/ErrorModal.svelte";
+  import WordcloudModal from "./modals/WordcloudModal.svelte";
   import Header from "./Header.svelte";
   import Intro from "./Intro.svelte";
   import Form from "./Form.svelte";
   import Results from "./Results.svelte";
-  import Sidebar from "./Sidebar.svelte";
-  import WordcloudModal from "./WordcloudModal.svelte";
-
+  
+  
   let rows;
   let showErrorModal = false;
   let showWordcloudModal = false; 
@@ -18,6 +17,7 @@
   let handleSubmit;
 </script>
 
+
 {#if showErrorModal}
   <ErrorModal {error} bind:showErrorModal />
 {/if}
@@ -25,10 +25,9 @@
 {#if showWordcloudModal}
   <WordcloudModal bind:showWordcloudModal />
 {/if}
-
 <Header />
 <div class="my-11 mx-10 grid gap-5 lg:grid-flow-col lg:auto-cols-[1fr_3fr]">
-  <Sidebar />
+
   <div class="grid gap-5 grid-cols-1">
     <Intro />
     <main class=" bg-slate-50 rounded-md shadow-md">

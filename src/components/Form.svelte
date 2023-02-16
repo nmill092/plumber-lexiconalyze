@@ -48,11 +48,10 @@
       lexicon = formObj.lexicon; 
       dispatch("submitted");
     } catch (err) {
-      alert(err);
       dispatch("servererror", {
         text:
           err.code === "ERR_BAD_RESPONSE"
-            ? "Sorry mate, the server had an issue processing your request 😢 Please try again or visit this page later."
+            ? "Sorry, the server had an issue processing your request 😢 Please try again or visit this page later."
             : "It looks like the server is offline 😔 Please try again later.",
       });
     }
@@ -61,10 +60,10 @@
 
 <form on:submit|preventDefault={handleSubmit} bind:this={form} class="w-full">
   <div class="px-8 py-6 my-4">
-    <h2 class="text-3xl my-4 font-roboto">Build your corpus</h2>
+    <h2 class="text-2xl font-bold my-4 font-roboto">Add your texts</h2>
     <div class="my-6">
-      <p class="mb-3">A <strong>corpus</strong> is a collection of texts that forms the basis of a. A text can be as short as a tweet or as long as a novel.</p> 
-      <p>Use the fields below to add your texts one-by-one. You can also submit a single text. You should aim to enter a total of at least a few sentences; otherwise, there won't be enough data to analyze your text.</p>
+      <p class="mb-3">Use the space below to add the texts you would like to analyze. For best results, texts should come from the same source or author. You should aim to enter a total of at least a few sentences; otherwise, there won't be enough data to analyze your text.
+      </p> 
     </div>
      <div class="flex flex-col gap-3 content-center">
       {#each texts as text, i (text.id)}
@@ -87,7 +86,7 @@
     </div>
 
     <hr class="my-8" />
-    <h2 class="text-3xl font-roboto">Customize your analysis</h2>
+    <h2 class="text-2xl font-bold font-roboto">Customize your analysis</h2>
 
     <div class="grid gap-2 grid-cols-1 lg:grid-cols-2">
       <div class="px-3 my-4 py-5 border-slate-200 rounded-lg border-2 bg-white">
@@ -100,8 +99,7 @@
             href="https://github.com/igorbrigadir/stopwords"
             target="_blank"
             rel="noreferrer">Stop words</a
-          > are words that appear frequently in most texts but carry little or no
-          lexical significance ("and", "the", "of", and so on). All of the most common
+          > are words that appear frequently in most texts but carry little or no significance ("and", "the", "of", and so on). All of the most common
           stop words will be filtered out of your text automatically, but you can
           enter additional custom stop words below.
         </p>
@@ -119,12 +117,12 @@
 
       <div class="py-6 px-3 my-4 border-slate-200 rounded-lg border-2 bg-white">
         <h3 class="text-slate-800 text-xl font-bold">
-          Choose a sentiment library 📚
+          Choose a sentiment lexicon 📚
         </h3>
         <p class="my-6">
-          There are many different methods and libraries that can be used to
-          evaluate the sentiment of a text. Here you can choose between three
-          popular sentiment libraries and compare the results. Which do you
+          There are many different methods and lexicons that can be used to
+          evaluate the sentiment of a text. Here you can choose between four
+          popular sentiment lexicons and compare the results. Which do you
           think most accurately gauges the sentiment of your texts?
         </p>
         <select

@@ -3,6 +3,7 @@
 
   export let data;
   export let words;
+  export let lexicon; 
   
   $: options = {
     series: [
@@ -14,6 +15,10 @@
       type: "bar",
       height: "600px",
     },
+    title: { 
+    text: lexicon + " Lexicon Sentiment Analysis",
+    align: "center"
+    }, 
     grid: {
         show: false
     },

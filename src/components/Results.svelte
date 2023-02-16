@@ -7,8 +7,8 @@
  export let showWordcloudModal; 
 
   
-import Chart from "./Chart.svelte";
-import DataGrid from "./DataGrid.svelte";
+import Chart from "./charts/Chart.svelte";
+import DataGrid from "./DataTable.svelte";
 
 afterUpdate(() => { 
     if(showTable) results.scrollIntoView({ block: "end", behavior: "smooth" });
@@ -19,6 +19,8 @@ afterUpdate(() => {
 
 <div bind:this={results}>
 {#if showTable}
+<h2 class="text-3xl my-4 font-roboto text-center">Results</h2>
+
   {#if rows.counts.length === 0}
     <div
       class="py-6 mx-10 px-3 my-4 border-slate-200 rounded-lg border-2 bg-white"

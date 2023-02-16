@@ -1,6 +1,6 @@
 <script>
   import 'tippy.js/dist/tippy.css';
-  import Main from "./lib/Main.svelte";
+  import Main from "./components/Main.svelte";
 </script>
 
 <main>

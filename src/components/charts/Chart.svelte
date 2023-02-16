@@ -8,13 +8,13 @@
 
 <div class="py-6 px-5 my-4 border-slate-200 rounded-lg border-2 bg-white">
   {#if lexicon !== "AFINN" && lexicon !== "Mechanical Turk (LabMT)"}
-    <SummaryChart data={data.summary} words={data.counts} />
+    <SummaryChart {lexicon} data={data.summary} words={data.counts} />
   {:else}
     <GaugeChart {lexicon} data={data.weighted_sentiment} />
 
     <p class="text-lg mb-10">
       The {lexicon} weighted average sentiment of your text corpus is
-      <strong class="text-indigo-800">{data.weighted_sentiment}</strong>
+      <strong class="text-indigo-800">{data.weighted_sentiment.toFixed(1)}</strong>
       on a scale from
       {lexicon === "AFINN"
         ? "-5 to 5, with -5 being the most negative and 5 being the most positive."
