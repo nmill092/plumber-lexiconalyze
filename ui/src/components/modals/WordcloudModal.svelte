@@ -6,7 +6,7 @@ import { onMount } from "svelte";
     let wordcloudSrc; 
 
     onMount(() => { 
-        axios.get("http://localhost:8000/wordcloud", {responseType: "blob"})
+        axios.get(`http://localhost:${import.meta.env.VITE_API_PORT}/wordcloud`, {responseType: "blob"})
             .then((res) => { 
                 wordcloudSrc = URL.createObjectURL(res.data); 
             })
