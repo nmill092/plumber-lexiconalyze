@@ -1,8 +1,11 @@
 # Setup -------------------------------------------------------------------
 
+install.packages("pacman")
+pacman::p_load("plumber", "dotenv", "tidyverse", "jsonlite", "tm", "tidytext", "readr", "wordcloud2", "RColorBrewer", "wordcloud", "htmlwidgets")
 
-# install.packages("pacman")
-pacman::p_load("plumber", "tidyverse", "jsonlite", "tm", "tidytext", "readr", "wordcloud2", "RColorBrewer", "wordcloud", "htmlwidgets")
+# Load preferred port from .env file and set it as default
+dotenv::load_dot_env(".env")
+plumber::options_plumber(port = as.numeric(Sys.getenv("API_PORT")))
 
 labMT <- read_delim("labMT2english.csv",delim = "\t") %>% rename("value" = "happs")
 

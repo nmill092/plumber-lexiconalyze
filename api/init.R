@@ -1,3 +1,4 @@
 library(plumber)
+library(dotenv)
 
-pr_run(pr("api.R"), port=8000)
+pr_run(pr("api/api.R"), port=Sys.getenv("API_PORT"))
