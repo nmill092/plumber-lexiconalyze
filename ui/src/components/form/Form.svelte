@@ -18,7 +18,7 @@
 
   onMount(() => {
     
-    axios.get(`http://localhost:${import.meta.env.VITE_API_PORT}/lexicons`)
+    axios.get(`${import.meta.env.VITE_API_BASE}/lexicons`)
         .then(res => {
           options = res.data; 
         })
@@ -44,7 +44,7 @@
 
 
     try {
-      const res = await axios.post(`http://localhost:${import.meta.env.VITE_API_PORT}/analyze`, formObj);
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE}/analyze`, formObj);
       rows = res.data;
       showTable = true;
       lexicon = formObj.lexicon; 

@@ -1,17 +1,16 @@
 # Setup -------------------------------------------------------------------
 
 install.packages("pacman")
-pacman::p_load("plumber", "dotenv", "tidyverse", "jsonlite", "tm", "tidytext", "readr", "wordcloud2", "RColorBrewer", "wordcloud", "htmlwidgets")
+pacman::p_load("tm", "readr", "broom", "dplyr", "magrittr", "jsonlite", "wordcloud")
 
-# Load preferred port from .env file and set it as default
-dotenv::load_dot_env(".env")
-plumber::options_plumber(port = as.numeric(Sys.getenv("API_PORT")))
+afinn <- base::readRDS("lexicons/afinn/afinn_111.rds")
+nrc <- base::readRDS("lexicons/nrc/NRCWordEmotion.rds") 
+bing <- base::readRDS("lexicons/bing/bing.rds")
+labMT <- readr::read_delim("labMT2english.csv",delim = "\t") %>% rename("value" = "happs")
 
-labMT <- read_delim("labMT2english.csv",delim = "\t") %>% rename("value" = "happs")
-
-lexicons <- list("AFINN" = tidytext::get_sentiments("afinn"), 
-                 "NRC" = tidytext::get_sentiments("nrc"), 
-                 "Bing" = tidytext::get_sentiments("bing"), 
+lexicons <- list("AFINN" = afinn, 
+                 "NRC" = nrc,
+                 "Bing" = bing,
                  "Mechanical Turk (LabMT)" = labMT)
 
 # I define this function outside of any particular endpoint to keep the endpoint code succinct
@@ -22,49 +21,49 @@ calculate_sentiment <- function(.corpus, .lexicon, .stops) {
   # Convert the array of texts into a Corpus so that we can clean it using tm
   corpus <- tm::Corpus(tm::VectorSource(jsonlite::fromJSON(.corpus)))  
   corpus <- tm::tm_map(corpus, content_transformer(tolower)) # convert all words to lower case
+  corpus <- tm::tm_map(corpus, removeWords, c(custom_stops, tm::stopwords())) # remove additional user-defined stop words 
   corpus <- tm::tm_map(corpus, removePunctuation) # remove all punctuation
+  corpus <- tm::tm_map(corpus, content_transformer(function(x) gsub("[[:punct:]]", " ", x)))
   corpus <- tm::tm_map(corpus, removeNumbers) # remove all numbers
   corpus <- tm::tm_map(corpus, stripWhitespace) # strip out white space
-  corpus <- tm::tm_map(corpus, removeWords, c(custom_stops, stop_words$word)) # remove additional user-defined stop words 
   corpus <- tm::DocumentTermMatrix(corpus) # create a Document Term Matrix from the final cleaned text
   
   lexicon_df <- data.frame(lexicons[[.lexicon]])
   
   # Assign the below object to the global scope so that it can be used in the /wordcloud endpoint
-  tidy.corpus <<- broom::tidy(corpus)
+  tidy.corpus <<- tidytext::tidy(corpus)
 
   if (!.lexicon %in% c("AFINN", "Mechanical Turk (LabMT)")) {
     counts <- tidy.corpus %>%
-      inner_join(lexicon_df, by = c(term = "word")) %>%
-      group_by(term, sentiment) %>%
-      summarise(count = sum(count, na.rm = T)) %>%
-      arrange(desc(count))
+      dplyr::inner_join(lexicon_df, by = c(term = "word")) %>%
+      dplyr::group_by(term, sentiment) %>%
+      dplyr::summarise(count = sum(count, na.rm = T)) %>%
+      dplyr::arrange(desc(count))
     
     summary <- counts %>%
-      group_by(sentiment) %>%
-      summarise(raw = sum(count, na.rm = T)) %>%
-      mutate(pct = raw / sum(raw) * 100) %>%
-      arrange(desc(pct))
+      dplyr::group_by(sentiment) %>%
+      dplyr::summarise(raw = sum(count, na.rm = T)) %>%
+      dplyr::mutate(pct = raw / sum(raw) * 100) %>%
+      dplyr::arrange(desc(pct))
     
     result <- list(counts = counts, 
                    summary = summary)
-    print(tidy.corpus)
-    
+
     return(result)
     
   } else {
     counts <- tidy.corpus %>%
-      group_by(term) %>%
-      summarise(count = sum(count, na.rm = T)) %>%
-      inner_join(lexicon_df, by = c(term = "word"))
+      dplyr::group_by(term) %>%
+      dplyr::summarise(count = sum(count, na.rm = T)) %>%
+      dplyr::inner_join(lexicon_df, by = c(term = "word"))
     
-    summary <- counts %>% mutate(weighted_value = count * value)
+    summary <- counts %>% dplyr::mutate(weighted_value = count * value)
 
     weighted_sentiment <- round(weighted.mean(x = summary$value, w = summary$count), 2)
     
     result <- list(counts = counts, 
                weighted_sentiment = weighted_sentiment)
-    print(tidy.corpus)
+
     return(result)
   }
 }
@@ -76,7 +75,7 @@ calculate_sentiment <- function(.corpus, .lexicon, .stops) {
 #* @filter cors
 cors <- function(req, res) {
   res$setHeader("Access-Control-Allow-Origin", "*")
-  
+
   if (req$REQUEST_METHOD %in% c("OPTIONS")) {
     res$setHeader("Access-Control-Allow-Methods", "*")
     res$setHeader("Access-Control-Allow-Headers",
@@ -98,7 +97,6 @@ function() {
 #* @serializer unboxedJSON
 #* @post /analyze
 function(req) {
-
   calculate_sentiment(.stops = req$body$stops, 
                       .corpus = req$body$corpus, 
                       .lexicon = req$body$lexicon)
@@ -108,11 +106,11 @@ function(req) {
 #* @serializer png
 function() {
   wordcloud_df <- tidy.corpus %>% 
-    rename("word" = "term", 
+    dplyr::rename("word" = "term", 
            "freq" = "count") %>% 
-    select(word,freq)
+    dplyr::select(word,freq)
   
-  wordcloud(words = wordcloud_df$word,
+  wordcloud::wordcloud(words = wordcloud_df$word,
             freq = wordcloud_df$freq,
             min.freq = 1,
             max.words=200, 
@@ -120,5 +118,4 @@ function() {
             random.order=T,
             rot.per=0.35,
             colors=brewer.pal(8, "Dark2"))
-
 }
