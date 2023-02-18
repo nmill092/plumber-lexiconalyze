@@ -10,7 +10,9 @@ node_modules
 dist
 dist-ssr
 *.local
+
 # Editor directories and files
+.vscode/
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -22,4 +24,10 @@ dist-ssr
 *.sw?
 .Rproj.user
 .httr-oauth
+.Rproj
+.Rhistory
+
+# Production
+build/
+
 .env
