@@ -1,47 +1,27 @@
-# Svelte + Vite
+# lexiconalyze
 
-This template should help get you started developing with Svelte in Vite.
+This app was created to demonstrate the process of building an API using R's [Plumber framework](https://www.rplumber.io/) and consuming it with a JavaScript front end.  
 
-## Recommended IDE Setup
+The Svelte front end is deployed at [nmill092.github.io/plumber-lexiconalyze](https://nmill092.github.io/plumber-lexiconalyze/). The API has been deployed onto a DigitalOcean droplet with the help of the R package `plumberDeploy`. 
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+To run the app locally, you will first run the API and then point your front end at it.
 
-## Need an official Svelte framework?
+## Running the API
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+Change your working directory to `api/`. 
 
-## Technical considerations
+Install the `plumber` package by running `install.packages("plumber")` in an R console.  Open `plumber.R`. If using RStudio, you can run the API by clicking "Run API" at the top of your editor window. Otherwise, you can run the API programmatically using the following command: `plumber::plumb("plumber.R") %>% plumber::pr_run()`. Optionally, you can add a `port` argument to specify a port on which the API should listen for requests. Otherwise, Plumber will randomly select an open port. See `?pr_run` for more details. 
 
-**Why use this over SvelteKit?**
+Once the API starts, check your R console and make note of the API's base URL (**127.0.0.1:xxxx** aka **localhost:xxxx**). You can test the API using the Swagger UI, Postman, cURL, or another tool.
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+## Running the front end 
 
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+Change your working directory to `ui/`. 
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+**IMPORTANT STEP**: At the root of `ui/`, create a `.env` file and add your API's base URL as follows (no curly braces): 
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
-
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
-
-**Why include `.vscode/extensions.json`?**
-
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
-
-**Why enable `checkJs` in the JS template?**
-
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+``` 
+VITE_API_BASE={YOUR API BASE URL GOES HERE}
 ```
+
+Make sure your working directory is set to `ui/`; then open a terminal and run `npm install && npm run dev`.
