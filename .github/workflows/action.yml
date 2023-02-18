@@ -19,8 +19,8 @@ jobs:
           npm run build
 
       - name: Deploy 🚀
-        working-directory: ./ui
         uses: crazy-max/ghaction-github-pages@v1
+        working-directory: ./ui
         with:
           target_branch: gh-pages
           build_dir: build # The folder the action should deploy.
