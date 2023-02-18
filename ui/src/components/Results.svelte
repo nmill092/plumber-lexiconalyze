@@ -1,7 +1,7 @@
 <script>
  import { afterUpdate } from "svelte";
  export let showTable;
- export let rows;
+ export let data;
  export let results;
  export let lexicon; 
  export let showWordcloudModal; 
@@ -20,7 +20,7 @@ afterUpdate(() => {
 {#if showTable}
 <h2 class="text-3xl my-4 font-roboto text-center">Results</h2>
 
-  {#if rows.counts.length === 0}
+  {#if data.counts.length === 0}
     <div
       class="py-6 mx-10 px-3 my-4 border-slate-200 rounded-lg border-2 bg-white"
     >
@@ -36,8 +36,8 @@ afterUpdate(() => {
       class="w-full px-10 mx-auto grid grid-cols-1 xl:grid-cols-2 gap-4"
     >
       
-    <Chart bind:showWordcloudModal {lexicon} data={rows}/>
-    <DataTable data={rows}/>
+    <Chart bind:showWordcloudModal {lexicon} data={data}/>
+    <DataTable data={data}/>
       
     </div>
   {/if}

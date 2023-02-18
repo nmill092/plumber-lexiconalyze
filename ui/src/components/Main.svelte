@@ -7,7 +7,7 @@
   import Results from "./Results.svelte";
   
   
-  let rows;
+  let data;
   let showErrorModal = false;
   let showWordcloudModal = false; 
   let error;
@@ -33,7 +33,7 @@
     <main class=" bg-slate-50 rounded-md shadow-md">
       <Form
         bind:lexicon
-        bind:rows
+        bind:data
         bind:showTable
         {handleSubmit}
         on:servererror={(e) => {
@@ -41,7 +41,7 @@
           error = e.detail.text;
         }}
       />
-      <Results bind:showWordcloudModal {lexicon} bind:showTable bind:rows bind:results />
+      <Results bind:showWordcloudModal {lexicon} bind:showTable bind:data bind:results />
     </main>
   </div>
 </div>

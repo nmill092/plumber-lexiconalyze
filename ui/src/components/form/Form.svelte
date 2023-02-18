@@ -8,7 +8,7 @@
   import Lexicon from "./Lexicon.svelte";
 
   export let lexicon; 
-  export let rows; // will be populated with api response data
+  export let data; // will be populated with api response data
   export let showTable = false;
 
   let form; 
@@ -45,7 +45,7 @@
 
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_BASE}/analyze`, formObj);
-      rows = res.data;
+      data = res.data;
       showTable = true;
       lexicon = formObj.lexicon; 
       dispatch("submitted");
