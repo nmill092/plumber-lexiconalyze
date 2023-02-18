@@ -18,21 +18,24 @@ calculate_sentiment <- function(.corpus, .lexicon, .stops) {
   
   custom_stops <- unlist(stringr::str_split(trimws(gsub("[[:punct:]]", " ", .stops)), "\\s+"))
   
-  # Convert the array of texts into a Corpus so that we can clean it using tm
   corpus <- tm::Corpus(tm::VectorSource(jsonlite::fromJSON(.corpus)))  
-  corpus <- tm::tm_map(corpus, content_transformer(tolower)) # convert all words to lower case
-  corpus <- tm::tm_map(corpus, removeWords, c(custom_stops, tm::stopwords())) # remove additional user-defined stop words 
-  corpus <- tm::tm_map(corpus, removePunctuation) # remove all punctuation
-  corpus <- tm::tm_map(corpus, content_transformer(function(x) gsub("[[:punct:]]", " ", x)))
-  corpus <- tm::tm_map(corpus, removeNumbers) # remove all numbers
-  corpus <- tm::tm_map(corpus, stripWhitespace) # strip out white space
-  corpus <- tm::DocumentTermMatrix(corpus) # create a Document Term Matrix from the final cleaned text
+  corpus <- tm::tm_map(corpus, content_transformer(tolower))
+  corpus <- tm::tm_map(corpus, removeNumbers) 
+  corpus <- tm::tm_map(corpus, removeWords, c(custom_stops, tm::stopwords())) # remove additional user-defined stop words
+  corpus <- tm::tm_map(corpus, removePunctuation) 
+  corpus <- tm::tm_map(corpus, content_transformer(function(x) gsub("[[:punct:]]", " ", x))) # remove punctuation not captured by above
+  
+  corpusCopy <- corpus # create a snapshot of the un-stemmed corpus for later use
+  
+  corpus <- tm::tm_map(corpus, stemDocument, language="english")
+  corpus <- tm::DocumentTermMatrix(corpus)
   
   lexicon_df <- data.frame(lexicons[[.lexicon]])
   
   # Assign the below object to the global scope so that it can be used in the /wordcloud endpoint
   tidy.corpus <<- tidytext::tidy(corpus)
-
+  tidy.corpus$term <<- as.character(stemCompletion(tidy.corpus$term,dictionary = corpusCopy))
+  
   if (!.lexicon %in% c("AFINN", "Mechanical Turk (LabMT)")) {
     counts <- tidy.corpus %>%
       dplyr::inner_join(lexicon_df, by = c(term = "word")) %>%
